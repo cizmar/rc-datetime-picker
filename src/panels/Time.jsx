@@ -39,12 +39,16 @@ class Time extends Component {
             <span className="text">{_moment.format('HH')}</span>
             <span className="separater">:</span>
             <span className="text">{_moment.format('mm')}</span>
+            { this.props.timeWithSeconds ? <span className="separater">:</span> : null }
+            { this.props.timeWithSeconds ? <span className="text">{_moment.format('ss')}</span> : null }
           </div>
           <div className="sliders">
             <span className="slider-text">Hours:</span>
             <ReactSlider min={0} max={23} value={_moment.hour()} onChange={(value) => this.handleChange(value, 'hours')} withBars />
             <span className="slider-text">Minutes:</span>
             <ReactSlider min={0} max={59} value={_moment.minute()} onChange={(value) => this.handleChange(value, 'minutes')} withBars />
+              { this.props.timeWithSeconds ? <span className="slider-text">Seconds:</span> : null }
+            { this.props.timeWithSeconds ? <ReactSlider min={0} max={59} value={_moment.second()} onChange={(value) => this.handleChange(value, 'seconds')} withBars /> : null }
           </div>
         </div>
       </div>

@@ -45,7 +45,7 @@ class Calendar extends Component {
   }
 
   render() {
-    const {weeks, months, dayFormat, style, maxDate, minDate} = this.props;
+    const {weeks, months, dayFormat, style, maxDate, minDate, weekStartWithMonday = false} = this.props;
     const props = {
       moment: this.state.moment,
       onSelect: this.handleSelect,
@@ -54,7 +54,8 @@ class Calendar extends Component {
       months,
       dayFormat,
       maxDate,
-      minDate
+      minDate,
+      weekStartWithMonday
     };
     const {panel} = this.state;
     const isDayPanel = panel === 'day';

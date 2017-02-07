@@ -2,13 +2,13 @@
  * rc-datetime-picker v1.4.2
  * https://github.com/AllenWooooo/rc-datetime-picker
  *
- * (c) 2016 Allen Wu
+ * (c) 2017 Allen Wu
  * License: MIT
  */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('react'), require('classnames/bind'), require('blacklist'), require('moment'), require('react-slider'), require('react-dom')) :
   typeof define === 'function' && define.amd ? define(['exports', 'react', 'classnames/bind', 'blacklist', 'moment', 'react-slider', 'react-dom'], factory) :
-  (factory((global.rc-datetime-picker = global.rc-datetime-picker || {}),global.React,global.classNames,global.blacklist,global.moment,global.ReactSlider,global.ReactDOM));
+  (factory((global['rc-datetime-picker'] = global['rc-datetime-picker'] || {}),global.React,global.classNames,global.blacklist,global.moment,global.ReactSlider,global.ReactDOM));
 }(this, (function (exports,React,classNames,blacklist,moment,ReactSlider,ReactDOM) { 'use strict';
 
 var React__default = 'default' in React ? React['default'] : React;
@@ -90,30 +90,7 @@ var _extends = Object.assign || function (target) {
   return target;
 };
 
-var get = function get(object, property, receiver) {
-  if (object === null) object = Function.prototype;
-  var desc = Object.getOwnPropertyDescriptor(object, property);
 
-  if (desc === undefined) {
-    var parent = Object.getPrototypeOf(object);
-
-    if (parent === null) {
-      return undefined;
-    } else {
-      return get(parent, property, receiver);
-    }
-  } else if ("value" in desc) {
-    return desc.value;
-  } else {
-    var getter = desc.get;
-
-    if (getter === undefined) {
-      return undefined;
-    }
-
-    return getter.call(receiver);
-  }
-};
 
 var inherits = function (subClass, superClass) {
   if (typeof superClass !== "function" && superClass !== null) {
@@ -147,30 +124,6 @@ var possibleConstructorReturn = function (self, call) {
   }
 
   return call && (typeof call === "object" || typeof call === "function") ? call : self;
-};
-
-
-
-var set = function set(object, property, value, receiver) {
-  var desc = Object.getOwnPropertyDescriptor(object, property);
-
-  if (desc === undefined) {
-    var parent = Object.getPrototypeOf(object);
-
-    if (parent !== null) {
-      set(parent, property, value, receiver);
-    }
-  } else if ("value" in desc && desc.writable) {
-    desc.value = value;
-  } else {
-    var setter = desc.set;
-
-    if (setter !== undefined) {
-      setter.call(receiver, value);
-    }
-  }
-
-  return value;
 };
 
 var Day = function (_Component) {
@@ -276,6 +229,16 @@ var Day = function (_Component) {
           dayFormat = _props$dayFormat === undefined ? DAY_FORMAT : _props$dayFormat;
 
 
+      var useWeeks = weeks.slice();
+      if (this.props.weekStartWithMonday) {
+        days = days.map(function (i) {
+          return i + 1;
+        });
+        //array of weeks allways starts with Sunday, so put Sunday at the end of the Week
+        var el = useWeeks.shift();
+        useWeeks.push(el);
+      }
+
       return React__default.createElement(
         'div',
         { className: 'calendar-days', style: this.props.style },
@@ -313,7 +276,7 @@ var Day = function (_Component) {
             React__default.createElement(
               'tr',
               null,
-              weeks.map(function (week) {
+              useWeeks.map(function (week) {
                 return _this2._renderWeek(week);
               })
             )
@@ -656,7 +619,9 @@ var Calendar = function (_Component) {
           dayFormat = _props.dayFormat,
           style = _props.style,
           maxDate = _props.maxDate,
-          minDate = _props.minDate;
+          minDate = _props.minDate,
+          _props$weekStartWithM = _props.weekStartWithMonday,
+          weekStartWithMonday = _props$weekStartWithM === undefined ? false : _props$weekStartWithM;
 
       var props = {
         moment: this.state.moment,
@@ -666,7 +631,8 @@ var Calendar = function (_Component) {
         months: months,
         dayFormat: dayFormat,
         maxDate: maxDate,
-        minDate: minDate
+        minDate: minDate,
+        weekStartWithMonday: weekStartWithMonday
       };
       var panel = this.state.panel;
 
@@ -757,7 +723,17 @@ var Time = function (_Component) {
               'span',
               { className: 'text' },
               _moment.format('mm')
-            )
+            ),
+            this.props.timeWithSeconds ? React__default.createElement(
+              'span',
+              { className: 'separater' },
+              ':'
+            ) : null,
+            this.props.timeWithSeconds ? React__default.createElement(
+              'span',
+              { className: 'text' },
+              _moment.format('ss')
+            ) : null
           ),
           React__default.createElement(
             'div',
@@ -777,7 +753,15 @@ var Time = function (_Component) {
             ),
             React__default.createElement(ReactSlider, { min: 0, max: 59, value: _moment.minute(), onChange: function onChange(value) {
                 return _this2.handleChange(value, 'minutes');
-              }, withBars: true })
+              }, withBars: true }),
+            this.props.timeWithSeconds ? React__default.createElement(
+              'span',
+              { className: 'slider-text' },
+              'Seconds:'
+            ) : null,
+            this.props.timeWithSeconds ? React__default.createElement(ReactSlider, { min: 0, max: 59, value: _moment.second(), onChange: function onChange(value) {
+                return _this2.handleChange(value, 'seconds');
+              }, withBars: true }) : null
           )
         )
       );

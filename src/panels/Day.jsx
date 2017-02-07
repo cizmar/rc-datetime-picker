@@ -85,12 +85,20 @@ class Day extends Component {
     const firstDay = _moment.clone().date(1).day();
     const endOfThisMonth = _moment.clone().endOf('month').date();
     const endOfLastMonth = _moment.clone().subtract(1, 'month').endOf('month').date();
-    const days = [].concat(
+    let days = [].concat(
       range(endOfLastMonth - firstDay + 1, endOfLastMonth + 1),
       range(1, endOfThisMonth + 1),
       range(1, 42 - endOfThisMonth - firstDay + 1)
     );
     const {weeks = WEEKS, dayFormat = DAY_FORMAT} = this.props;
+    
+    let useWeeks = weeks.slice()
+    if(this.props.weekStartWithMonday) {
+        days = days.map(i => { return i+1 })
+        //array of weeks allways starts with Sunday, so put Sunday at the end of the Week
+        let el = useWeeks.shift()
+        useWeeks.push(el)
+    }
 
     return (
       <div className="calendar-days" style={this.props.style}>
@@ -105,7 +113,7 @@ class Day extends Component {
         </div>
         <table>
           <thead>
-            <tr>{weeks.map((week) => this._renderWeek(week))}</tr>
+            <tr>{useWeeks.map((week) => this._renderWeek(week))}</tr>
           </thead>
           <tbody>
             {chunk(days, 7).map((week, idx) => {
